@@ -1,136 +1,90 @@
 <?php
 /**
- * @package EJLS Easy Json-ld Setter
- * @version 1.2
+ * @package Structured Data of JSON-LD
+ * @version 2.1
  */
 /*
-Plugin Name: EJLS Easy Json-ld Setter
+Plugin Name: Structured Data of JSON-LD
 Plugin URI: http://wordpress.org/plugins/ejls-easy-json-ld-setter/
-Description: Easy set JSON-ld data on your blog.
+Description: Set Structured Data of "JSON-LD" to your WebSite.schema type that you can use is "Article","Person","WebSite" and "searchAction".
 Author: Hidetaka Okamoto
-Version: 1.2
+Version: 2.1
 Author URI: http://wp-kyoto.net/
 */
 add_action('wp_head','ejls_insert_json_ld');
-function ejls_esc_html($ejlsCnt) {
-    return esc_html(str_replace(array("\r\n","\n","\r","\t"), "", strip_tags($ejlsCnt)));
-}
 
 function ejls_get_article () {
     if (is_page() || is_single()) {
         if (have_posts()) : while (have_posts()) : the_post();
-            $type = 'Article';
-            $name = get_the_title();
-            $authorType = 'Person';
-            $authorName = get_the_author();
-            $dataPublished = get_the_date('Y-n-j');
-            $image = wp_get_attachment_url(get_post_thumbnail_id());
-            $articleBody =ejls_esc_html(get_the_content());
-            $url = get_permalink();
-            $publisherType = 'Organization';
-            $publisherName = get_bloginfo('name');
-            $json= '{
-                    "@type" : "'.$type.'",
-                    "name" : "'.$name.'",
-                    "author" : {
-                      "@type" : "'.$authorType.'",
-                      "name" : "'.$authorName.'"
-                     },
-                    "datePublished" : "'.$dataPublished.'",
-                    "image" : "'.$image.'",
-                    "articleBody" : "'.$articleBody.'",
-                    "url" : "'.$url.'",
-                    "publisher" : {
-                      "@type" : "'.$publisherType.'",
-                      "name" : "'.$publisherName.'"
-                    }
-                    }';
+            $contentArr['@type'] = 'Article';
+            $contentArr['headline'] = get_the_title();
+            $time = strtotime( get_the_time('c') );
+            $contentArr['datePublished'] = date( 'c', $time );
+
+            $contentArr['image'] = ejls_post_thumbnail();
+            $contentArr['url'] = get_permalink();
+            $contentArr['articleBody'] = get_the_content();
+
+            $contentArr['author']['@type'] = 'Person';
+            $contentArr['author']['name']  = get_the_author();
+
+            $contentArr['publisher']['@type'] = 'Organization';
+            $contentArr['publisher']['name']  = get_bloginfo('name');
+
         endwhile; endif;
         rewind_posts();
-        return $json;
-    }
-}
-function ejls_get_search_Action(){
-    if (is_front_page()) {
-    $homeUrl = get_home_url();
-    $json = '
-    "potentialAction": {
-        "@type": "SearchAction",
-          "target": "' . $homeUrl . '/?s={search_term}",
-          "query-input": "required name=search_term"
-    },';
-    return $json;
+        return $contentArr;
     }
 }
 
-function ejls_get_breadcrumb(){
+function ejls_catch_that_image() {
     global $post;
-    $str ='';
-    if(!is_home()&&!is_admin()){
-        $str.= '<div id="breadcrumb" class="cf"><div itemscope itemtype="http://data-vocabulary.org/Breadcrumb">';
-        $str.= '<a href="'. home_url() .'" itemprop="url"><span itemprop="title">ホーム</span></a> &gt;</div>';
-        /*
-        Home URLを設定する
-        {
-            "@context" : "http://data-vocabulary.org/",
-            "@type"    : "Breadcrumb",
-            "url"      : "http://wp-kyoto.net/",
-            "title"    : "WP-kyoto"
-        }
-        */
-
-        if(is_category()) {
-            $cat = get_queried_object();
-            if($cat -> parent != 0){
-                $ancestors = array_reverse(get_ancestors( $cat -> cat_ID, 'category' ));
-                foreach($ancestors as $ancestor){
-                    $str.='<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="'. get_category_link($ancestor) .'" itemprop="url"><span itemprop="title">'. get_cat_name($ancestor) .'</span></a> &gt;</div>';
-                }
-            }
-        $str.='<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="'. get_category_link($cat -> term_id). '" itemprop="url"><span itemprop="title">'. $cat-> cat_name . '</span></a></div>';
-        } elseif(is_page()){
-            if($post -> post_parent != 0 ){
-                $ancestors = array_reverse(get_post_ancestors( $post->ID ));
-                foreach($ancestors as $ancestor){
-                    $str.='<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="'. get_permalink($ancestor).'" itemprop="url"><span itemprop="title">'. get_the_title($ancestor) .'</span></a></div>';
-                }
-            }
-        } elseif(is_single()){
-            $categories = get_the_category($post->ID);
-            $cat = $categories[0];
-            if($cat -> parent != 0){
-                $ancestors = array_reverse(get_ancestors( $cat -> cat_ID, 'category' ));
-                foreach($ancestors as $ancestor){
-                    $str.='<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="'. get_category_link($ancestor).'" itemprop="url"><span itemprop="title">'. get_cat_name($ancestor). '</span></a> &gt;</div>';
-                }
-            }
-            $str.='<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="'. get_category_link($cat -> term_id). '" itemprop="url"><span itemprop="title">'. $cat-> cat_name . '</span></a></div>';
-        } else{
-            $str.='<div>'. wp_title('', false) .'</div>';
-        }
-        $str.='</div>';
+    if ( preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches ) ) {
+        $ejls_first_img = $matches[1][0];
+    } else {
+        $ejls_first_img = false;
     }
-    return $str;
+    return $ejls_first_img;
+}
+function ejls_post_thumbnail() {
+    if ( get_post_thumbnail_id() ) {
+        $ejls_img = wp_get_attachment_url( get_post_thumbnail_id() );
+    } elseif( ejls_catch_that_image() ) {
+        $ejls_img = ejls_catch_that_image();
+    } else {
+        $ejls_img = null;
+    }
+    return $ejls_img;
+}
+
+function ejls_get_search_Action($homeUrl){
+    $contentArr = array(
+        "@type"      => "SearchAction",
+        "target"     => "{$homeUrl}/?s={search_term}",
+        "query-input"=> "required name=search_term"
+    );
+    return $contentArr;
 }
 
 function ejls_insert_json_ld(){
-    $searchAction = ejls_get_search_Action();
-    $article = ejls_get_article();
     $homeUrl = get_home_url();
 
-    $json = '
-    <script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type": "WebSite",
-        "url": "' . $homeUrl . '",
-        ' . $searchAction . '
-        "@graph" : [
-          ' . $article . '
-        ]
+    $contentArr = array(
+        "@context" => "http://schema.org",
+    );
+    if (is_front_page()) {
+        $contentArr['@type']            = "WebSite";
+        $contentArr['url']              = $homeUrl;
+        $contentArr['potentialAction']  = ejls_get_search_Action($homeUrl);
+    } elseif (is_page() || is_single()) {
+        $contentArr['@graph'] = ejls_get_article();
     }
-    </script>';
-    echo $json;
+
+    $jsonld = json_encode($contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+
+    echo '<script type="application/ld+json">';
+    echo $jsonld;
+    echo '</script>';
 }
 
 ?>
