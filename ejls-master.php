@@ -23,7 +23,7 @@ function ejls_get_article () {
 
             $contentArr['image'] = ejls_post_thumbnail();
             $contentArr['url'] = get_permalink();
-            $contentArr['articleBody'] = get_the_content();
+            $contentArr['articleBody'] = strip_tags( get_the_content() );
 
             $contentArr['author']['@type'] = 'Person';
             $contentArr['author']['name']  = get_the_author();
