@@ -23,7 +23,8 @@ function ejls_get_article () {
 
             $contentArr['image'] = ejls_post_thumbnail();
             $contentArr['url'] = get_permalink();
-            $contentArr['articleBody'] = get_the_content();
+            // $contentArr['articleBody'] = get_the_content();
+            $contentArr['articleBody'] =  strip_tags( get_the_content() );
 
             $contentArr['author']['@type'] = 'Person';
             $contentArr['author']['name']  = get_the_author();
@@ -80,7 +81,7 @@ function ejls_insert_json_ld(){
         $contentArr['@graph'] = ejls_get_article();
     }
 
-    $jsonld = json_encode($contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    $jsonld = json_encode( $contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
     echo '<script type="application/ld+json">';
     echo $jsonld;
