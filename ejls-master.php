@@ -81,7 +81,11 @@ function ejls_insert_json_ld(){
         $contentArr['@graph'] = ejls_get_article();
     }
 
-    $jsonld = json_encode( $contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+    if ( is_user_logged_in() ) {
+      $jsonld = json_encode( $contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT );
+    } else {
+      $jsonld = json_encode( $contentArr, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+    }
 
     echo '<script type="application/ld+json">';
     echo $jsonld;
