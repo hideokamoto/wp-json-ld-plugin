@@ -27,7 +27,7 @@ IF post.php and page.php, you can use "Article" and "Person".
 == Installation ==
 
 
-1. Upload `easy-json-ld-setter` directory to the `/wp-content/plugins/` directory
+1. Upload `wp-json-ld-plugin` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
