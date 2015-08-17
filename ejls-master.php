@@ -46,14 +46,20 @@ function ejls_catch_that_image() {
     }
     return $ejls_first_img;
 }
+
 function ejls_post_thumbnail() {
     if ( get_post_thumbnail_id() ) {
         $ejls_img = wp_get_attachment_url( get_post_thumbnail_id() );
     } elseif( ejls_catch_that_image() ) {
         $ejls_img = ejls_catch_that_image();
     } else {
-        $ejls_img = null;
+        $ejls_img = false;
     }
+
+    if (!$ejls_img) {
+        $ejls_img = plugin_dir_url( __FILE__ ). "dummyimage.png";
+    }
+
     return $ejls_img;
 }
 
