@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Structured Data of JSON-LD
- * @version 3.0
+ * @version 3.0-dev
  */
 /*
 Plugin Name: Structured Data of JSON-LD
@@ -93,4 +93,3 @@ function ejls_insert_json_ld(){
     echo '</script>';
 }
 
-?>
