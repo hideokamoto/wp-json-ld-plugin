@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Structured Data of JSON-LD
- * @version 2.2
+ * @version 3.0
  */
 /*
 Plugin Name: Structured Data of JSON-LD
 Plugin URI: http://wordpress.org/plugins/ejls-easy-json-ld-setter/
 Description: Set Structured Data of "JSON-LD" to your WebSite.schema type that you can use is "Article","Person","WebSite" and "searchAction".
 Author: Hidetaka Okamoto
-Version: 2.2
+Version: 3.0
 Author URI: http://wp-kyoto.net/
 */
 add_action('wp_footer','ejls_insert_json_ld');
