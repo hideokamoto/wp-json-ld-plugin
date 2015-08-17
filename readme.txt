@@ -4,7 +4,7 @@ Donate link: https://note.mu/hideokamoto/n/nd0cecce0e758
 Tags: json-ld
 Requires at least: 4.0-alpha
 Tested up to: 4.2
-Stable tag: 2.1
+Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,8 +49,9 @@ Try it! -> https://developers.google.com/webmasters/structured-data/testing-tool
 
 == Changelog ==
 
-= 2.1 =
-2015/08/18 Move JSON-LD from "wp_head" to "wp_footer".
+= 2.2 =
+2015/08/18  Move JSON-LD from "wp_head" to "wp_footer".
+			Add Dummy Image for required image properties.
 
 = 2.1 =
 2015/08/11 Support Article Requirement.
@@ -70,7 +71,7 @@ Try it! -> https://developers.google.com/webmasters/structured-data/testing-tool
 
 == Upgrade Notice ==
 
-= 2.1 =
-2015/08/11 Support Article Requirement.
+= 2.2 =
+2015/08/18 Move JSON-LD position & Support requirement properties.
 
 == Arbitrary section ==
