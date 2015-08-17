@@ -50,6 +50,9 @@ Try it! -> https://developers.google.com/webmasters/structured-data/testing-tool
 == Changelog ==
 
 = 2.1 =
+2015/08/18 Move JSON-LD from "wp_head" to "wp_footer".
+
+= 2.1 =
 2015/08/11 Support Article Requirement.
 
 = 2.0 =

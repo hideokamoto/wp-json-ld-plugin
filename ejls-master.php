@@ -11,7 +11,7 @@ Author: Hidetaka Okamoto
 Version: 2.1
 Author URI: http://wp-kyoto.net/
 */
-add_action('wp_head','ejls_insert_json_ld');
+add_action('wp_footer','ejls_insert_json_ld');
 
 function ejls_get_article () {
     if (is_page() || is_single()) {
