@@ -41,7 +41,7 @@ function ejls_make_html($jsonld){
  */
 class EJLS_JSONLD_Content
 {
-  public $contentArray;
+  private $contentArray;
 
   function __construct(){
     $this->_set_jsonld();
